@@ -94,6 +94,10 @@ const Favourites = mongoose.model('Favourites')
 require('./Bookings')
 const Bookings = mongoose.model('Bookings')
 
+require('./Pending')
+
+const Pending=mongoose.model('PendingDetails')
+
 
 app.get("/", (req, res) => {
     res.send({ status: "Started" })
@@ -283,11 +287,12 @@ app.post('/update-password', async (req, res) => {
 })
 
 app.post('/add-hotel', async (req, res) => {
-    const { hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee, rating, reviewcount, facilities, images } = req.body
+    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee, rating, reviewcount, facilities, images } = req.body
     console.log(req.body)
     try {
 
         await Hotel.create({
+            hoteluserid,
             hotelname,
             hotelnumber,
             location,
@@ -310,6 +315,35 @@ app.post('/add-hotel', async (req, res) => {
 
     }
 })
+app.post('/req-hotel', async (req, res) => {
+    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee, rating, reviewcount, facilities, images } = req.body
+    console.log(req.body)
+    try {
+
+        await Pending.create({
+            hoteluserid,
+            hotelname,
+            hotelnumber,
+            location,
+            locationlink,
+            actualrate,
+            discountedrate,
+            discountpercentage,
+            taxandfee,
+            rating,
+            reviewcount,
+            facilities,
+            images
+
+        })
+        res.send({ status: 'ok', data: 'Requested Successfully' })
+
+
+    } catch (err) {
+        res.send({ data: 'Error in Requesting' })
+
+    }
+})
 app.get('/get-all-hotels', async (req, res) => {
     try {
         const hotels = await Hotel.find({})
@@ -317,6 +351,34 @@ app.get('/get-all-hotels', async (req, res) => {
             res.send({ status: 'ok', data: hotels })
         } else {
             res.send({ data: 'Hotels Not Found' })
+        }
+    } catch (err) {
+        console.log(err)
+        res.send({ data: 'Unknown Error occured' })
+    }
+})
+app.get('/get-pending-hotels', async (req, res) => {
+    try {
+        const hotels = await Pending.find({})
+        if (hotels.length > 0) {
+            res.send({ status: 'ok', data: hotels })
+        } else {
+            res.send({ data: 'Hotels Not Found' })
+        }
+    } catch (err) {
+        console.log(err)
+        res.send({ data: 'Unknown Error occured' })
+    }
+})
+app.post('/remove-pending-hotels', async (req, res) => {
+    const{_id}=req.body
+    console.log(_id)
+    try {
+        const hotels = await Pending.findOneAndDelete({_id})
+        if (hotels) {
+            res.send({ status: 'ok', data: "Removed Succesfully" })
+        } else {
+            res.send({ data: 'Hotel Not Found' })
         }
     } catch (err) {
         console.log(err)

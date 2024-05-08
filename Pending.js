@@ -1,6 +1,6 @@
 const  mongoose  = require("mongoose")
 
-const HotelDetialsSchema=new mongoose.Schema({
+const PendingDetialsSchema=new mongoose.Schema({
     hoteluserid:String,
     hotelname:String,
     hotelnumber:String,
@@ -15,8 +15,8 @@ const HotelDetialsSchema=new mongoose.Schema({
     facilities:[String],
     images:[String],
 },{
-    collection:"HotelDetails"
+    collection:"PendingDetails"
   }
 )
 
-mongoose.model("HotelDetails",HotelDetialsSchema)
+mongoose.model("PendingDetails",PendingDetialsSchema)
