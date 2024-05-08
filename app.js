@@ -138,7 +138,6 @@ app.post('/generateOTP', (req, res) => {
 app.post('/register', async (req, res) => {
 
     const { name, number, email, password, userType, image } = req.body
-    console.log(req.body)
 
     const olduser = await User.findOne({ email: email })
 
