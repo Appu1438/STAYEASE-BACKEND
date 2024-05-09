@@ -287,7 +287,7 @@ app.post('/update-password', async (req, res) => {
 })
 
 app.post('/add-hotel', async (req, res) => {
-    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee, rating, reviewcount, facilities, images } = req.body
+    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,extraperhead,extraperroom,extraperday, rating, reviewcount, facilities, images } = req.body
     console.log(req.body)
     try {
 
@@ -301,6 +301,9 @@ app.post('/add-hotel', async (req, res) => {
             discountedrate,
             discountpercentage,
             taxandfee,
+            extraperhead,
+            extraperroom,
+            extraperday,
             rating,
             reviewcount,
             facilities,
@@ -316,7 +319,7 @@ app.post('/add-hotel', async (req, res) => {
     }
 })
 app.post('/req-hotel', async (req, res) => {
-    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee, rating, reviewcount, facilities, images } = req.body
+    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,extraperhead,extraperroom,extraperday, rating, reviewcount, facilities, images } = req.body
     console.log(req.body)
     try {
 
@@ -330,6 +333,9 @@ app.post('/req-hotel', async (req, res) => {
             discountedrate,
             discountpercentage,
             taxandfee,
+            extraperhead,
+            extraperroom,
+            extraperday,
             rating,
             reviewcount,
             facilities,
@@ -385,6 +391,25 @@ app.post('/remove-pending-hotels', async (req, res) => {
         res.send({ data: 'Unknown Error occured' })
     }
 })
+app.get('/get-user-hotels/:hoteluserid',async(req,res)=>{
+    console.log(req.params.hoteluserid)
+   
+    try {
+        const hoteluserid=req.params.hoteluserid
+        const hotels=await Hotel.find({ hoteluserid  })
+        console.log(hotels)
+        if (hotels.length>0) {
+            res.send({ status: 'ok', data: hotels })
+        } else {
+            res.send({ data: 'No Hotels Found' })
+        }
+    } catch (err) {
+        console.log(err)
+        res.send({ data: 'Unknown Error occured' })
+    }
+   
+})
+
 app.get('/get-hotel-byID', async (req, res) => {
     try {
         const { id } = req.query;
@@ -430,6 +455,7 @@ app.post('/add-to-favorites', async (req, res) => {
         res.send({ status: 'error', data: 'Failed to add hotel to favorites' });
     }
 });
+
 
 app.get('/get-favorites/:userId', async (req, res) => {
     try {
