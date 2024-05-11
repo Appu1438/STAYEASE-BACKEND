@@ -287,7 +287,7 @@ app.post('/update-password', async (req, res) => {
 })
 
 app.post('/add-hotel', async (req, res) => {
-    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,extraperhead,extraperroom,extraperday, rating, reviewcount, facilities, images } = req.body
+    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,availablerooms,personsperroom,extraperhead,extraperroom,extraperday, rating,  facilities, images } = req.body
     console.log(req.body)
     try {
 
@@ -301,11 +301,12 @@ app.post('/add-hotel', async (req, res) => {
             discountedrate,
             discountpercentage,
             taxandfee,
+            availablerooms,
+            personsperroom,
             extraperhead,
             extraperroom,
             extraperday,
             rating,
-            reviewcount,
             facilities,
             images
 
@@ -319,7 +320,7 @@ app.post('/add-hotel', async (req, res) => {
     }
 })
 app.post('/req-hotel', async (req, res) => {
-    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,extraperhead,extraperroom,extraperday, rating, reviewcount, facilities, images } = req.body
+    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,availablerooms,personsperroom,extraperhead,extraperroom,extraperday, rating, facilities, images } = req.body
     console.log(req.body)
     try {
 
@@ -333,11 +334,12 @@ app.post('/req-hotel', async (req, res) => {
             discountedrate,
             discountpercentage,
             taxandfee,
+            availablerooms,
+            personsperroom,
             extraperhead,
             extraperroom,
             extraperday,
             rating,
-            reviewcount,
             facilities,
             images
 

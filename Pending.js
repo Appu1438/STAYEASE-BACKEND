@@ -10,11 +10,12 @@ const PendingDetialsSchema=new mongoose.Schema({
     discountedrate:String,
     discountpercentage:String,
     taxandfee:String,
+    availablerooms:String,
+    personsperroom:String,
     extraperhead:String,
     extraperroom:String,
     extraperday:String,
     rating:String,
-    reviewcount:String,
     facilities:[String],
     images:[String],
 },{
