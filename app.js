@@ -635,6 +635,22 @@ app.get('/get-user-bookings/:userId', async (req, res) => {
 
     }
 })
+app.get('/get-business-bookings/:hoteluserId', async (req, res) => {
+    try {
+        const hoteluserId = req.params.hoteluserId
+        let Booking = await Bookings.find({ hoteluserId })
+        console.log("BusinessBook", Booking)
+        if (Booking.length == 0) {
+            return res.send({ data: 'No Bookings Found' }); // Return an empty array if user has no favorites
+        } else {
+            res.send({ status: 'ok', data: Booking });
+        }
+        // Return the list of favorite hotel IDs
+    } catch (err) {
+        res.send({ data: 'Something Error' });
+
+    }
+})
 
 app.post('/cancel-booking', async (req, res) => {
     const { id } = req.body
