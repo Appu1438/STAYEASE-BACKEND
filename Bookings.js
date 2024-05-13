@@ -2,6 +2,7 @@ const  mongoose  = require("mongoose")
 
 const BookingsSchema=new mongoose.Schema({
     userId:String,
+    username:String,
     hotelId:String,
     hoteluserId:String,
     hotelName:String,
@@ -27,5 +28,4 @@ const BookingsSchema=new mongoose.Schema({
     collection:"Bookings"
   }
 )
-
 mongoose.model("Bookings",BookingsSchema)
