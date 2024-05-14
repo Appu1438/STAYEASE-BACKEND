@@ -21,6 +21,6 @@ const PendingDetialsSchema=new mongoose.Schema({
 },{
     collection:"PendingDetails"
   }
+  
 )
-
 mongoose.model("PendingDetails",PendingDetialsSchema)
