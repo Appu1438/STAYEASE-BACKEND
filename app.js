@@ -371,9 +371,9 @@ app.get('/get-pending-hotels', async (req, res) => {
         if (hotels.length > 0) {
             res.send({ status: 'ok', data: hotels })
         } else {
-            res.send({ data: 'Hotels Not Found' })
+            res.send({ data: 'Requests Not Found' })
         }
-    } catch (err) {
+        } catch (err) {
         console.log(err)
         res.send({ data: 'Unknown Error occured' })
     }
@@ -632,7 +632,6 @@ app.get('/get-user-bookings/:userId', async (req, res) => {
         // Return the list of favorite hotel IDs
     } catch (err) {
         res.send({ data: 'Something Error' });
-
     }
 })
 app.get('/get-business-bookings/:hoteluserId', async (req, res) => {
