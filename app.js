@@ -50,8 +50,8 @@ app.post('/create-payment-intent', async (req, res) => {
 app.post('/refund', async (req, res) => {
     try {
         // Extract booking data from request body
-        const { paymentMethodId, amount,id } = req.body;
-        console.log(paymentMethodId,amount,id)
+        const { paymentMethodId, amount, id } = req.body;
+        console.log(paymentMethodId, amount, id)
 
         // Use Stripe's API to create a refund
         const refund = await stripe.refunds.create({
@@ -62,7 +62,7 @@ app.post('/refund', async (req, res) => {
         // Check if refund is successful
         if (refund.status === 'succeeded') {
 
-            const updatedDocument = await Bookings.findByIdAndUpdate(id, { PaymentStatus: 'Refunded',RefundedAmount:amount/100 });
+            const updatedDocument = await Bookings.findByIdAndUpdate(id, { PaymentStatus: 'Refunded', RefundedAmount: amount / 100 });
             // Refund successful
             res.status(200).json({ status: 'ok', message: 'Refund successful' });
         } else {
@@ -96,7 +96,7 @@ const Bookings = mongoose.model('Bookings')
 
 require('./Pending')
 
-const Pending=mongoose.model('PendingDetails')
+const Pending = mongoose.model('PendingDetails')
 
 
 app.get("/", (req, res) => {
@@ -287,30 +287,13 @@ app.post('/update-password', async (req, res) => {
 })
 
 app.post('/add-hotel', async (req, res) => {
-    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,availablerooms,personsperroom,extraperhead,extraperroom,extraperday, rating,  facilities, images } = req.body
     console.log(req.body)
     try {
 
-        await Hotel.create({
-            hoteluserid,
-            hotelname,
-            hotelnumber,
-            location,
-            locationlink,
-            actualrate,
-            discountedrate,
-            discountpercentage,
-            taxandfee,
-            availablerooms,
-            personsperroom,
-            extraperhead,
-            extraperroom,
-            extraperday,
-            rating,
-            facilities,
-            images
 
-        })
+        const newBooking = new Hotel(req.body);
+        // Save the booking to the database
+        const savedBooking = await newBooking.save();
         res.send({ status: 'ok', data: 'Hotel Added Successfully' })
 
 
@@ -320,30 +303,13 @@ app.post('/add-hotel', async (req, res) => {
     }
 })
 app.post('/req-hotel', async (req, res) => {
-    const {hoteluserid, hotelname, hotelnumber, location, locationlink, actualrate, discountedrate, discountpercentage, taxandfee,availablerooms,personsperroom,extraperhead,extraperroom,extraperday, rating, facilities, images } = req.body
     console.log(req.body)
     try {
 
-        await Pending.create({
-            hoteluserid,
-            hotelname,
-            hotelnumber,
-            location,
-            locationlink,
-            actualrate,
-            discountedrate,
-            discountpercentage,
-            taxandfee,
-            availablerooms,
-            personsperroom,
-            extraperhead,
-            extraperroom,
-            extraperday,
-            rating,
-            facilities,
-            images
 
-        })
+        const newBooking = new Pending(req.body);
+        // Save the booking to the database
+        const savedBooking = await newBooking.save();
         res.send({ status: 'ok', data: 'Requested Successfully' })
 
 
@@ -352,6 +318,86 @@ app.post('/req-hotel', async (req, res) => {
 
     }
 })
+
+
+app.post('/update-business', async (req, res) => {
+    const {
+        hotelid,
+        hoteluserid,
+        hotelname,
+        hotelnumber,
+        location,
+        locationlink,
+        actualrate,
+        discountedrate,
+        discountpercentage,
+        taxandfee,
+        availablerooms,
+        personsperroom,
+        extraperhead,
+        extraperroom,
+        extraperday,
+        rating,
+        facilities,
+        images
+    } = req.body;
+
+    try {
+        const _id=hotelid
+        const updatedHotel = await Hotel.findOneAndUpdate(
+            { _id },
+            {
+                hoteluserid,
+                hotelname,
+                hotelnumber,
+                location,
+                locationlink,
+                actualrate,
+                discountedrate,
+                discountpercentage,
+                taxandfee,
+                availablerooms,
+                personsperroom,
+                extraperhead,
+                extraperroom,
+                extraperday,
+                rating,
+                facilities,
+                images
+            },
+            { new: true }
+        );
+
+        if (!updatedHotel) {
+            return res.status(404).send('Hotel not found');
+        }
+
+        res.send({ status: 'ok', data: 'Hotel Updated Successfully' });
+    } catch (error) {
+        console.error('Error updating hotel:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/delete-business',async(req,res)=>{
+    console.log(req.body._id)
+    const _id=req.body._id
+    
+  try {
+    const deletedHotel = await Hotel.findByIdAndDelete(_id);
+
+    if (!deletedHotel) {
+      return res.status(404).send('Hotel not found');
+    }
+
+    res.send({status:'ok',data:'Hotel was deleted successfully.'});
+    
+  } catch (error) {
+    console.error('Error deleting hotel:', error);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
 app.get('/get-all-hotels', async (req, res) => {
     try {
         const hotels = await Hotel.find({})
@@ -373,16 +419,16 @@ app.get('/get-pending-hotels', async (req, res) => {
         } else {
             res.send({ data: 'Requests Not Found' })
         }
-        } catch (err) {
+    } catch (err) {
         console.log(err)
         res.send({ data: 'Unknown Error occured' })
     }
 })
 app.post('/remove-pending-hotels', async (req, res) => {
-    const{_id}=req.body
+    const { _id } = req.body
     console.log(_id)
     try {
-        const hotels = await Pending.findOneAndDelete({_id})
+        const hotels = await Pending.findOneAndDelete({ _id })
         if (hotels) {
             res.send({ status: 'ok', data: "Removed Succesfully" })
         } else {
@@ -393,14 +439,14 @@ app.post('/remove-pending-hotels', async (req, res) => {
         res.send({ data: 'Unknown Error occured' })
     }
 })
-app.get('/get-user-hotels/:hoteluserid',async(req,res)=>{
+app.get('/get-user-hotels/:hoteluserid', async (req, res) => {
     console.log(req.params.hoteluserid)
-   
+
     try {
-        const hoteluserid=req.params.hoteluserid
-        const hotels=await Hotel.find({ hoteluserid  })
+        const hoteluserid = req.params.hoteluserid
+        const hotels = await Hotel.find({ hoteluserid })
         console.log(hotels)
-        if (hotels.length>0) {
+        if (hotels.length > 0) {
             res.send({ status: 'ok', data: hotels })
         } else {
             res.send({ data: 'No Hotels Found' })
@@ -409,7 +455,7 @@ app.get('/get-user-hotels/:hoteluserid',async(req,res)=>{
         console.log(err)
         res.send({ data: 'Unknown Error occured' })
     }
-   
+
 })
 
 app.get('/get-hotel-byID', async (req, res) => {
@@ -611,7 +657,7 @@ app.get('/get-booking-deatils/:_id', async (req, res) => {
     try {
         const _id = req.params._id;
         let Booking = await Bookings.findById(_id).populate('hotelId');
-        console.log('Booking',Booking)
+        console.log('Booking', Booking)
         res.send({ status: 'ok', data: Booking });
     } catch (err) {
         res.send({ data: "Error Fetching booking" });
@@ -746,7 +792,7 @@ async function CancelationEmail(bookingData) {
                 </html>
             `
         };
-        
+
         // Send the email
         await transporter.sendMail(mailOptions);
     } catch (error) {
@@ -756,8 +802,8 @@ async function CancelationEmail(bookingData) {
 
 app.post('/update-payment-sts', async (req, res) => {
     const { _id, TotalAmount } = req.body
-    const paymentDetails=req.body.PaymentDetails
-    console.log(_id, TotalAmount,paymentDetails)
+    const paymentDetails = req.body.PaymentDetails
+    console.log(_id, TotalAmount, paymentDetails)
 
     try {
         // Find the document by its ID and update it
@@ -765,7 +811,7 @@ app.post('/update-payment-sts', async (req, res) => {
             $set: {
                 PaymentStatus: 'paid',
                 PaidAmount: TotalAmount,
-                PaymentDetails: paymentDetails 
+                PaymentDetails: paymentDetails
             },
         }, { new: true });
 
@@ -774,7 +820,7 @@ app.post('/update-payment-sts', async (req, res) => {
         }
         else {
             // Document updated successfully
-            await sendPaymentConfirmationEmail(updatedDocument,TotalAmount)
+            await sendPaymentConfirmationEmail(updatedDocument, TotalAmount)
             return res.send({ status: 'ok', data: updatedDocument });
         }
 
@@ -784,7 +830,7 @@ app.post('/update-payment-sts', async (req, res) => {
     }
 })
 
-async function sendPaymentConfirmationEmail(bookingData,Total) {
+async function sendPaymentConfirmationEmail(bookingData, Total) {
     try {
         // Retrieve user details based on booking data (assuming 'userId' field exists in bookingData)
         const user = await User.findById(bookingData.userId);
