@@ -82,19 +82,19 @@ mongoose.connect(Mongourl).then(() => {
     console.log(e)
 })
 
-require("./Userdetails")
+require("./DB Models/Userdetails")
 const User = mongoose.model("UserInfo")
 
-require('./Hoteldetails')
+require('./DB Models/Hoteldetails')
 const Hotel = mongoose.model('HotelDetails')
 
-require('./Favourites')
+require('./DB Models/Favourites')
 const Favourites = mongoose.model('Favourites')
 
-require('./Bookings')
+require('./DB Models/Bookings')
 const Bookings = mongoose.model('Bookings')
 
-require('./Pending')
+require('./DB Models/Pending')
 
 const Pending = mongoose.model('PendingDetails')
 
@@ -288,10 +288,15 @@ app.post('/update-password', async (req, res) => {
 
 app.post('/add-hotel', async (req, res) => {
     console.log(req.body)
+    const _id=req.body._id
     try {
 
-
+         
         const newBooking = new Hotel(req.body);
+
+        if(_id){
+            const pendingReq=await Pending.findByIdAndDelete({ _id })
+        }
         // Save the booking to the database
         const savedBooking = await newBooking.save();
         res.send({ status: 'ok', data: 'Hotel Added Successfully' })
@@ -514,11 +519,12 @@ app.get('/get-favorites/:userId', async (req, res) => {
         const userFavorites = await Favourites.findOne({ userId });
 
         if (!userFavorites) {
-            return res.send({ status: 'ok', data: [] }); // Return an empty array if user has no favorites
+            return res.send({  data: 'No favourites found' }); // Return an empty array if user has no favorites
+        }else{
+            res.send({ status: 'ok', data: userFavorites.hotels });
         }
 
         // Return the list of favorite hotel IDs
-        res.send({ status: 'ok', data: userFavorites.hotels });
     } catch (error) {
         console.error('Error getting user favorites:', error);
         res.status(500).json({ status: 'error', message: 'Failed to get user favorites' });
