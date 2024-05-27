@@ -189,7 +189,6 @@ app.post('/login-user', async (req, res) => {
 app.post('/user-data', async (req, res) => {
     const { token } = req.body;
     // console.log("Backend", token);
-
     try {
         const decodedUser = jwt.verify(token, JWT_SECRET);
         // console.log("DecodeUser",decodedUser)
@@ -671,17 +670,6 @@ app.get('/get-booking-deatils/:_id', async (req, res) => {
 
 })
 // Example endpoint: GET /api/bookings/:bookingId
-app.get('/get-booking-by-BookingId/:bookingId',async (req, res) => {
-    console.log(req.body)
-    const BookingId = req.params.bookingId;
-    const bookingDetails = await Bookings.findOne({ BookingId }); // Assume this function retrieves booking details
-    if (bookingDetails) {
-        res.status(200).json(bookingDetails);
-    } else {
-        res.status(404).json({ message: 'Booking not found' });
-    }
-});
-
 
 app.get('/get-user-bookings/:userId', async (req, res) => {
     try {
