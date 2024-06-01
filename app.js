@@ -240,7 +240,8 @@ app.post('/delete-user', async (req, res) => {
 })
 
 app.post('/update-user', async (req, res) => {
-    const { name, number, email, image } = req.body
+    console.log(req.body)
+    const { name, number, email,userType, image } = req.body
     try {
         let user = await User.findOne({ email: email })
         await User.updateOne({ email: email }, {
@@ -248,6 +249,7 @@ app.post('/update-user', async (req, res) => {
                 name,
                 number,
                 email,
+                userType,
                 image
             }
         })
