@@ -1,10 +1,23 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const nodemailer = require('nodemailer');
 
 const HotelRouter = express.Router();
 
+require("../Database/models/Userdetails")
+const User = mongoose.model("UserInfo")
+
 require('../Database/models/Hoteldetails')
 const Hotel = mongoose.model('HotelDetails')
+
+require('../Database/models/Favourites')
+const Favourites = mongoose.model('Favourites')
+
+require('../Database/models/Bookings')
+const Bookings = mongoose.model('Bookings')
+
+require('../Database/models/Pending')
+const Pending = mongoose.model('PendingDetails')
 
 HotelRouter.get('/get-user-hotels/:hoteluserid', async (req, res) => {
     console.log(req.params.hoteluserid)

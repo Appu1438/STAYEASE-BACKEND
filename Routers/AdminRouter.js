@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const HotelRouter = require('./HotelRouter');
+const nodemailer = require('nodemailer');
 
 const AdminRouter = express.Router();
 
