@@ -18,6 +18,7 @@ const HotelDetialsSchema=new mongoose.Schema({
     rating:String,
     facilities:[String],
     images:[String],
+    available:Boolean,
 },{
     collection:"HotelDetails"
   }

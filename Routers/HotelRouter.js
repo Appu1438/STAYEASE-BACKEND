@@ -151,4 +151,43 @@ HotelRouter.get('/get-business-bookings/:hoteluserId', async (req, res) => {
     }
 })
 
+HotelRouter.post('/activate-hotel',async (req,res)=>{
+    console.log(req.body.id)
+    const _id=req.body.id
+
+    try {
+        const UpdatedHotel=await Hotel.findByIdAndUpdate({ _id } , {available:true} )
+        if (!UpdatedHotel) {
+            return res.status(404).send('Hotel not found');
+        }else{
+            res.send({ status: 'ok', data: 'Activated Successfully' });
+
+        }
+
+    } catch (error) {
+        console.error('Error updating hotel:', error);
+        res.status(500).send('Internal Server Error');
+        
+    }
+})
+HotelRouter.post('/deactivate-hotel',async (req,res)=>{
+    console.log(req.body.id)
+    const _id=req.body.id
+
+    try {
+        const UpdatedHotel=await Hotel.findByIdAndUpdate({ _id } , {available:false} )
+        if (!UpdatedHotel) {
+            return res.status(404).send('Hotel not found');
+        }else{
+            res.send({ status: 'ok', data: 'Deactivated Successfully' });
+
+        }
+
+    } catch (error) {
+        console.error('Error updating hotel:', error);
+        res.status(500).send('Internal Server Error');
+        
+    }
+})
+
 module.exports=HotelRouter
