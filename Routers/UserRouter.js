@@ -24,6 +24,9 @@ const Bookings = mongoose.model('Bookings')
 require('../Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
+require('../Database/models/Reviews')
+const Reviews=mongoose.model('Reviews')
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
@@ -522,6 +525,29 @@ UserRouter.get('/get-hotel-byID', async (req, res) => {
     }
 })
 
+UserRouter.post('/reviews', async (req, res) => {
+    try {
+        console.log(req.body)
+        const { hotelId, userName, userId, review } = req.body;
+        const newReview = new Reviews({ hotelId, userName,userId, review });
+        await newReview.save();
+        return res.send({ status: 'ok', data: newReview });
+    } catch (error) {
+        res.status(500).json({ data: 'Error adding review', error });
+    }
+});
+
+UserRouter.get('/reviews/:hotelId', async (req, res) => {
+    try {
+        console.log('review',req.params)
+        const { hotelId } = req.params;
+
+        const reviews = await Reviews.find({ hotelId }).sort({ createdAt: -1 });
+        return res.send({ status: 'ok', data: reviews });
+    } catch (error) {
+        res.status(500).json({ data: 'Error fetching reviews', error });
+    }
+});
 
 
 
