@@ -5,6 +5,7 @@ const reviewSchema = new mongoose.Schema({
     userName: { type: String, required: true },
     userId: { type: String, required: true },
     review: { type: String, required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 }, // Rating from 1 to 5
     createdAt: { type: Date, default: Date.now }
 },{
     collection:"Reviews"

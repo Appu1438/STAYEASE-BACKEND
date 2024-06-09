@@ -15,10 +15,13 @@ const HotelDetialsSchema=new mongoose.Schema({
     extraperhead:String,
     extraperroom:String,
     extraperday:String,
-    rating:String,
     facilities:[String],
     images:[String],
-    available:Boolean,
+    available:{type:Boolean,default: true},
+    reviewcount:{ type: Number, default: 0 },
+    ratings:[Number],
+    averageRating: { type: Number, default: 0 }
+
 },{
     collection:"HotelDetails"
   }

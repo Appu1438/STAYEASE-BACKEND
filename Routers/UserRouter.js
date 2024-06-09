@@ -32,6 +32,11 @@ function formatDate(dateString) {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
     return date.toLocaleDateString('en-GB', options);
 }
+const calculateAverageRating = (ratings) => {
+    if (ratings.length === 0) return 0;
+    const sum = ratings.reduce((a, b) => a + b, 0);
+    return sum / ratings.length;
+};
 
 UserRouter.post('/user-data', async (req, res) => {
     const { token } = req.body;
@@ -524,18 +529,34 @@ UserRouter.get('/get-hotel-byID', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Internal server error' });
     }
 })
-
 UserRouter.post('/reviews', async (req, res) => {
     try {
-        console.log(req.body)
-        const { hotelId, userName, userId, review } = req.body;
-        const newReview = new Reviews({ hotelId, userName,userId, review });
+        console.log(req.body);
+        const { hotelId, userName, userId, review, rating } = req.body;
+        const newReview = new Reviews({ hotelId, userName, userId, review, rating });
         await newReview.save();
+
+        // Update the hotel to push the new rating and increment the review count
+        const hotel = await Hotel.findByIdAndUpdate(
+            { _id: hotelId },
+            {
+                $inc: { reviewcount: 1 },
+                $push: { ratings: rating }
+            },
+            { new: true }
+        );
+
+        // Calculate the new average rating
+        const averageRating = calculateAverageRating(hotel.ratings);
+        hotel.averageRating = averageRating;
+        await hotel.save();
+
         return res.send({ status: 'ok', data: newReview });
     } catch (error) {
         res.status(500).json({ data: 'Error adding review', error });
     }
 });
+
 
 UserRouter.get('/reviews/:hotelId', async (req, res) => {
     try {
@@ -546,6 +567,38 @@ UserRouter.get('/reviews/:hotelId', async (req, res) => {
         return res.send({ status: 'ok', data: reviews });
     } catch (error) {
         res.status(500).json({ data: 'Error fetching reviews', error });
+    }
+});
+UserRouter.delete('/reviews/:id', async (req, res) => {
+    try {
+        const reviewId = req.params.id;
+
+        // Find the review by ID
+        const review = await Reviews.findById(reviewId);
+        if (!review) {
+            return res.status(404).json({ data: 'Review not found' });
+        }
+
+        // Delete the review
+        await Reviews.findByIdAndDelete(reviewId);
+
+        // Decrement the review count and remove the rating from the associated hotel
+       const hotel = await Hotel.findByIdAndUpdate(
+            { _id: review.hotelId },
+            { 
+                $inc: { reviewcount: -1 },
+                $pull: { ratings: review.rating }
+            },
+            { new: true } // This option returns the modified document
+        );
+        
+        const averageRating = calculateAverageRating(hotel.ratings);
+        hotel.averageRating = averageRating;
+        await hotel.save();
+
+        return res.send({ status: 'ok', data: 'Review and rating deleted' });
+    } catch (error) {
+        res.status(500).json({ data: 'Error deleting review and rating', error });
     }
 });
 

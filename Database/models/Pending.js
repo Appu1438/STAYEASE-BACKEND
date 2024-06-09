@@ -15,7 +15,7 @@ const PendingDetialsSchema=new mongoose.Schema({
     extraperhead:String,
     extraperroom:String,
     extraperday:String,
-    rating:String,
+    // rating:String,
     facilities:[String],
     images:[String],
 },{
