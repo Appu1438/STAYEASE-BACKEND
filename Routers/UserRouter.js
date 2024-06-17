@@ -5,7 +5,10 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs')
 
+
+
 const UserRouter = express.Router();
+
 const JWT_SECRET = "jkjdsnfsd()asjfbaujewhrhejwo[]jsdf";
 
 
@@ -32,10 +35,12 @@ function formatDate(dateString) {
     const options = { day: 'numeric', month: 'short', year: 'numeric' };
     return date.toLocaleDateString('en-GB', options);
 }
+
 const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
     const sum = ratings.reduce((a, b) => a + b, 0);
-    return sum / ratings.length;
+    const average = sum / ratings.length;
+    return parseFloat(average.toFixed(1));
 };
 
 UserRouter.post('/user-data', async (req, res) => {
