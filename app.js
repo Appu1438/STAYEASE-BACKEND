@@ -29,7 +29,6 @@ const Bookings = mongoose.model('Bookings')
 require('./Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
-
 require('./Database/models/Reviews')
 const Reviews=mongoose.model('Reviews')
 

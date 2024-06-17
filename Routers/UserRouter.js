@@ -101,8 +101,6 @@ UserRouter.post('/generateOTP', (req, res) => {
 });
 
 
-
-
 UserRouter.post('/register', async (req, res) => {
 
     const { name, number, email, password, userType, image } = req.body

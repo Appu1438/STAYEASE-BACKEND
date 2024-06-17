@@ -38,7 +38,6 @@ HotelRouter.get('/get-user-hotels/:hoteluserid', async (req, res) => {
 
 })
 
-
 HotelRouter.post('/req-hotel', async (req, res) => {
     console.log(req.body)
     try {
