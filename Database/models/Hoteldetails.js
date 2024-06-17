@@ -25,6 +25,7 @@ const HotelDetialsSchema=new mongoose.Schema({
 },{
     collection:"HotelDetails"
   }
+  
 )
 
 mongoose.model("HotelDetails",HotelDetialsSchema)

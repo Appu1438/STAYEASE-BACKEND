@@ -37,6 +37,7 @@ AdminRouter.get('/get-all-users', async (req, res) => {
 })
 
 
+
 AdminRouter.post('/add-hotel', async (req, res) => {
     console.log(req.body)
     const _id=req.body._id
