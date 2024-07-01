@@ -20,7 +20,8 @@ const BookingsSchema=new mongoose.Schema({
       paymentMethodId: String,
       amount: String,
       currency: String,
-      clientSecret: String
+      clientSecret: String,
+      invoice:String,
   }],
   RefundedAmount:String,
   PaidAmount:String,

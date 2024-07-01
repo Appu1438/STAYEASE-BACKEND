@@ -3,7 +3,7 @@ const app = express()
 
 app.use(express.json())
 
-const db =require( './Database/connection')
+const db = require('./Database/connection')
 const mongoose = require('mongoose')
 
 const bodyParser = require('body-parser');
@@ -30,17 +30,17 @@ require('./Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
 require('./Database/models/Reviews')
-const Reviews=mongoose.model('Reviews')
+const Reviews = mongoose.model('Reviews')
 
 
-const UserRouter=require("./Routers/UserRouter")
-app.use('/user', UserRouter); 
+const UserRouter = require("./Routers/UserRouter")
+app.use('/user', UserRouter);
 
-const HotelRouter=require('./Routers/HotelRouter')
-app.use('/hotel',HotelRouter)
+const HotelRouter = require('./Routers/HotelRouter')
+app.use('/hotel', HotelRouter)
 
-const AdminRouter=require('./Routers/AdminRouter')
-app.use('/admin',AdminRouter)
+const AdminRouter = require('./Routers/AdminRouter')
+app.use('/admin', AdminRouter)
 
 
 const PUBLISH_KEY = 'pk_test_51NtRBkSEmsfUtDI2xbYoEzVmCHkf7UlwgqRxbpKJSSPWugQXbowVpDiMXHhgg7bibtqWxP2GzEjuZieYQ4ns2fIC00kIt633nm'
@@ -219,6 +219,51 @@ async function sendPaymentConfirmationEmail(bookingData, Total) {
         console.error('Error sending payment confirmation email:', error);
     }
 }
+
+
+app.post('/create-invoice', async (req, res) => {
+    try {
+        const { customerName, customerEmail, amount, description } = req.body;
+        
+        // Create a customer in Stripe
+        const customer = await stripe.customers.create({
+            email: customerEmail,
+            name: customerName,
+        });
+
+        // Create an invoice item
+        await stripe.invoiceItems.create({
+            customer: customer.id,
+            amount: amount * 100, // Convert amount to cents
+            currency: 'inr',
+            description: description,
+        });
+
+        // Create the invoice
+        const invoice = await stripe.invoices.create({
+            customer: customer.id,
+          });
+
+          console.log(invoice);
+
+
+        // Finalize the invoice (optional step)
+        const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+
+        console.log(finalizedInvoice);
+
+        // Get the invoice PDF URL
+        const invoiceUrl = finalizedInvoice.hosted_invoice_url;
+        console.log(invoiceUrl);
+
+        // Respond with the invoice URL
+        res.send({ status: 'ok', data: invoiceUrl });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 app.get("/", (req, res) => {
     res.send({ status: "Started" })

@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs')
-
+require('dotenv').config();
 
 
 const UserRouter = express.Router();
@@ -43,16 +43,25 @@ const calculateAverageRating = (ratings) => {
     return parseFloat(average.toFixed(1));
 };
 
+
 UserRouter.post('/user-data', async (req, res) => {
     const { token } = req.body;
 
     if (!token) {
-        console.log('token need')
+        console.log('Token is required');
         return res.status(400).send({ error: "Token is required" });
     }
+
     try {
-        const decodedUser = jwt.verify(token, JWT_SECRET);
+        // Verify token and decode user email
+        const decodedUser = jwt.verify(token,JWT_SECRET);
+
+        // Check if token is expired
+       
+
         const userEmail = decodedUser.email;
+
+        // Fetch user details from database using email
         const user = await User.findOne({ email: userEmail });
 
         if (!user) {
@@ -61,7 +70,8 @@ UserRouter.post('/user-data', async (req, res) => {
 
         return res.send({ status: 'ok', data: user });
     } catch (err) {
-        return res.status(401).send({ error: "Invalid token" });
+        // Handle JWT errors
+       
     }
 });
 
@@ -136,9 +146,9 @@ UserRouter.post('/login-user', async (req, res) => {
     }
     if (await bcrypt.compare(password, olduser.password)) {
         const token = jwt.sign({ email: olduser.email }, JWT_SECRET)
-
+     
         if (res.status(201)) {
-            return res.send({ status: 'ok', data: token, userType: olduser.userType })
+            return res.send({ status: 'ok', data: token, userType: olduser.userType,})
         } else {
             return res.send({ error: "error" })
         }
@@ -147,6 +157,11 @@ UserRouter.post('/login-user', async (req, res) => {
         return res.send({ data: "Incorrect Password" })
     }
 })
+
+async function generateAccessToken(payload) {
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' }); // Adjust expiry as needed
+}
+
 
 UserRouter.post('/delete-user', async (req, res) => {
     const { email, userId } = req.body
