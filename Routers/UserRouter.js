@@ -3,7 +3,8 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const checkTokenExpiry = require('../middleware/checktoken');
 require('dotenv').config();
 
 
@@ -28,7 +29,7 @@ require('../Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
 require('../Database/models/Reviews')
-const Reviews=mongoose.model('Reviews')
+const Reviews = mongoose.model('Reviews')
 
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -44,7 +45,7 @@ const calculateAverageRating = (ratings) => {
 };
 
 
-UserRouter.post('/user-data', async (req, res) => {
+UserRouter.post('/user-data',checkTokenExpiry, async (req, res) => {
     const { token } = req.body;
 
     if (!token) {
@@ -54,10 +55,10 @@ UserRouter.post('/user-data', async (req, res) => {
 
     try {
         // Verify token and decode user email
-        const decodedUser = jwt.verify(token,JWT_SECRET);
+        const decodedUser = jwt.verify(token, JWT_SECRET);
 
         // Check if token is expired
-       
+
 
         const userEmail = decodedUser.email;
 
@@ -71,7 +72,7 @@ UserRouter.post('/user-data', async (req, res) => {
         return res.send({ status: 'ok', data: user });
     } catch (err) {
         // Handle JWT errors
-       
+
     }
 });
 
@@ -145,10 +146,10 @@ UserRouter.post('/login-user', async (req, res) => {
         return res.send({ data: "User doesn't exists" })
     }
     if (await bcrypt.compare(password, olduser.password)) {
-        const token = jwt.sign({ email: olduser.email }, JWT_SECRET)
-     
+        const token = jwt.sign({ email: olduser.email }, JWT_SECRET , {expiresIn: '1m'})
+
         if (res.status(201)) {
-            return res.send({ status: 'ok', data: token, userType: olduser.userType,})
+            return res.send({ status: 'ok', data: token, userType: olduser.userType, })
         } else {
             return res.send({ error: "error" })
         }
@@ -156,6 +157,13 @@ UserRouter.post('/login-user', async (req, res) => {
     } else {
         return res.send({ data: "Incorrect Password" })
     }
+})
+
+UserRouter.post('/logout', async (req, res) => {
+    const {token} =req.body
+
+    res.send({status:'ok',data:'loggedOut'})
+
 })
 
 async function generateAccessToken(payload) {
@@ -184,7 +192,7 @@ UserRouter.post('/delete-user', async (req, res) => {
 
 UserRouter.post('/update-user', async (req, res) => {
     console.log(req.body)
-    const { name, number, email,userType, image } = req.body
+    const { name, number, email, userType, image } = req.body
     try {
         let user = await User.findOne({ email: email })
         await User.updateOne({ email: email }, {
@@ -295,8 +303,8 @@ UserRouter.get('/get-favorites/:userId', async (req, res) => {
         const userFavorites = await Favourites.findOne({ userId });
 
         if (!userFavorites) {
-            return res.send({  data: 'No favourites found' }); // Return an empty array if user has no favorites
-        }else{
+            return res.send({ data: 'No favourites found' }); // Return an empty array if user has no favorites
+        } else {
             res.send({ status: 'ok', data: userFavorites.hotels });
         }
 
@@ -580,7 +588,7 @@ UserRouter.post('/reviews', async (req, res) => {
 
 UserRouter.get('/reviews/:hotelId', async (req, res) => {
     try {
-        console.log('review',req.params)
+        console.log('review', req.params)
         const { hotelId } = req.params;
 
         const reviews = await Reviews.find({ hotelId }).sort({ createdAt: -1 });
@@ -603,15 +611,15 @@ UserRouter.delete('/reviews/:id', async (req, res) => {
         await Reviews.findByIdAndDelete(reviewId);
 
         // Decrement the review count and remove the rating from the associated hotel
-       const hotel = await Hotel.findByIdAndUpdate(
+        const hotel = await Hotel.findByIdAndUpdate(
             { _id: review.hotelId },
-            { 
+            {
                 $inc: { reviewcount: -1 },
                 $pull: { ratings: review.rating }
             },
             { new: true } // This option returns the modified document
         );
-        
+
         const averageRating = calculateAverageRating(hotel.ratings);
         hotel.averageRating = averageRating;
         await hotel.save();

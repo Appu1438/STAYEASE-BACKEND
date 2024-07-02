@@ -268,8 +268,13 @@ app.post('/create-invoice', async (req, res) => {
 app.get("/", (req, res) => {
     res.send({ status: "Started" })
 })
+app.get("/home", (req, res) => {
+    res.send({ status: "Home" })
+})
 
-app.listen(1438, () => {
+const PORT=1438
+
+app.listen(PORT, () => {
 
     console.log("Node js Server Started")
 })

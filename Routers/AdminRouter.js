@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const HotelRouter = require('./HotelRouter');
 const nodemailer = require('nodemailer');
+const checkTokenExpiry = require('../middleware/checktoken');
 
 const AdminRouter = express.Router();
 
@@ -21,7 +22,7 @@ const Bookings = mongoose.model('Bookings')
 require('../Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
-AdminRouter.get('/get-all-users', async (req, res) => {
+AdminRouter.get('/get-all-users',checkTokenExpiry, async (req, res) => {
 
     try {
         const data = await User.find({})
