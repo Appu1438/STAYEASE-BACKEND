@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const nodemailer = require('nodemailer');
+const checkTokenExpiry = require('../middleware/checktoken');
 
 const HotelRouter = express.Router();
 
@@ -19,7 +20,7 @@ const Bookings = mongoose.model('Bookings')
 require('../Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
-HotelRouter.get('/get-user-hotels/:hoteluserid', async (req, res) => {
+HotelRouter.get('/get-user-hotels/:hoteluserid',checkTokenExpiry, async (req, res) => {
     console.log(req.params.hoteluserid)
 
     try {
@@ -38,7 +39,7 @@ HotelRouter.get('/get-user-hotels/:hoteluserid', async (req, res) => {
 
 })
 
-HotelRouter.post('/req-hotel', async (req, res) => {
+HotelRouter.post('/req-hotel', checkTokenExpiry,async (req, res) => {
     console.log(req.body)
     try {
 
@@ -56,7 +57,7 @@ HotelRouter.post('/req-hotel', async (req, res) => {
 })
 
 
-HotelRouter.post('/update-business', async (req, res) => {
+HotelRouter.post('/update-business',checkTokenExpiry, async (req, res) => {
     const {
         hotelid,
         hoteluserid,
@@ -115,7 +116,7 @@ HotelRouter.post('/update-business', async (req, res) => {
     }
 });
 
-HotelRouter.post('/delete-business',async(req,res)=>{
+HotelRouter.post('/delete-business',checkTokenExpiry,async(req,res)=>{
     console.log(req.body._id)
     const _id=req.body._id
     
@@ -134,7 +135,7 @@ HotelRouter.post('/delete-business',async(req,res)=>{
   }
 })
 
-HotelRouter.get('/get-business-bookings/:hoteluserId', async (req, res) => {
+HotelRouter.get('/get-business-bookings/:hoteluserId',checkTokenExpiry, async (req, res) => {
     try {
         const hoteluserId = req.params.hoteluserId
         let Booking = await Bookings.find({ hoteluserId })
@@ -151,7 +152,7 @@ HotelRouter.get('/get-business-bookings/:hoteluserId', async (req, res) => {
     }
 })
 
-HotelRouter.post('/activate-hotel',async (req,res)=>{
+HotelRouter.post('/activate-hotel',checkTokenExpiry,async (req,res)=>{
     console.log(req.body.id)
     const _id=req.body.id
 
@@ -170,7 +171,7 @@ HotelRouter.post('/activate-hotel',async (req,res)=>{
         
     }
 })
-HotelRouter.post('/deactivate-hotel',async (req,res)=>{
+HotelRouter.post('/deactivate-hotel',checkTokenExpiry,async (req,res)=>{
     console.log(req.body.id)
     const _id=req.body.id
 

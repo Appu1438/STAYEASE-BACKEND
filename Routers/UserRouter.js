@@ -238,7 +238,7 @@ UserRouter.post('/update-password', async (req, res) => {
     }
 })
 
-UserRouter.post('/add-to-favorites', async (req, res) => {
+UserRouter.post('/add-to-favorites',checkTokenExpiry, async (req, res) => {
     try {
         console.log(req.body);
         const { userId, hotelId } = req.body;
@@ -267,7 +267,7 @@ UserRouter.post('/add-to-favorites', async (req, res) => {
     }
 });
 
-UserRouter.post('/remove-from-favorites', async (req, res) => {
+UserRouter.post('/remove-from-favorites',checkTokenExpiry, async (req, res) => {
     try {
         const { userId, hotelId } = req.body;
 
@@ -316,7 +316,7 @@ UserRouter.get('/get-favorites/:userId', async (req, res) => {
 });
 
 
-UserRouter.post('/submit-booking', async (req, res) => {
+UserRouter.post('/submit-booking',checkTokenExpiry, async (req, res) => {
     console.log(req.body)
     try {
         // Create a new booking instance using the request body data
@@ -410,7 +410,7 @@ async function sendConfirmationEmail(bookingData) {
     await transporter.sendMail(mailOptions);
 }
 
-UserRouter.get('/get-user-bookings/:userId', async (req, res) => {
+UserRouter.get('/get-user-bookings/:userId',checkTokenExpiry, async (req, res) => {
     try {
         const userId = req.params.userId
         let Booking = await Bookings.find({ userId })
@@ -426,7 +426,7 @@ UserRouter.get('/get-user-bookings/:userId', async (req, res) => {
     }
 })
 
-UserRouter.get('/get-booking-deatils/:_id', async (req, res) => {
+UserRouter.get('/get-booking-deatils/:_id',checkTokenExpiry, async (req, res) => {
     try {
         const _id = req.params._id;
         let Booking = await Bookings.findById(_id).populate('hotelId');
@@ -438,7 +438,7 @@ UserRouter.get('/get-booking-deatils/:_id', async (req, res) => {
 
 })
 
-UserRouter.post('/cancel-booking', async (req, res) => {
+UserRouter.post('/cancel-booking',checkTokenExpiry, async (req, res) => {
     const { id } = req.body
     console.log('cancel', id)
 
@@ -557,7 +557,8 @@ UserRouter.get('/get-hotel-byID', async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Internal server error' });
     }
 })
-UserRouter.post('/reviews', async (req, res) => {
+
+UserRouter.post('/reviews',checkTokenExpiry, async (req, res) => {
     try {
         console.log(req.body);
         const { hotelId, userName, userId, review, rating } = req.body;
@@ -597,7 +598,7 @@ UserRouter.get('/reviews/:hotelId', async (req, res) => {
         res.status(500).json({ data: 'Error fetching reviews', error });
     }
 });
-UserRouter.delete('/reviews/:id', async (req, res) => {
+UserRouter.delete('/reviews/:id',checkTokenExpiry, async (req, res) => {
     try {
         const reviewId = req.params.id;
 

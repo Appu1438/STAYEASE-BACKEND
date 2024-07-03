@@ -22,7 +22,7 @@ const Bookings = mongoose.model('Bookings')
 require('../Database/models/Pending')
 const Pending = mongoose.model('PendingDetails')
 
-AdminRouter.get('/get-all-users',checkTokenExpiry, async (req, res) => {
+AdminRouter.get('/get-all-users', async (req, res) => {
 
     try {
         const data = await User.find({})
@@ -38,7 +38,7 @@ AdminRouter.get('/get-all-users',checkTokenExpiry, async (req, res) => {
 })
 
 
-AdminRouter.post('/add-hotel', async (req, res) => {
+AdminRouter.post('/add-hotel',checkTokenExpiry, async (req, res) => {
     console.log(req.body)
     const _id=req.body._id
     try {
@@ -74,7 +74,7 @@ AdminRouter.get('/get-all-hotels', async (req, res) => {
     }
 })
 
-AdminRouter.get('/get-pending-hotels', async (req, res) => {
+AdminRouter.get('/get-pending-hotels',checkTokenExpiry, async (req, res) => {
     try {
         const hotels = await Pending.find({})
         if (hotels.length > 0) {
@@ -88,7 +88,7 @@ AdminRouter.get('/get-pending-hotels', async (req, res) => {
     }
 })
 
-AdminRouter.post('/remove-pending-hotels', async (req, res) => {
+AdminRouter.post('/remove-pending-hotels',checkTokenExpiry, async (req, res) => {
     const { _id } = req.body
     console.log(_id)
     try {
