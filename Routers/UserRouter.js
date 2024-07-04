@@ -166,12 +166,9 @@ UserRouter.post('/logout', async (req, res) => {
 
 })
 
-async function generateAccessToken(payload) {
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' }); // Adjust expiry as needed
-}
 
 
-UserRouter.post('/delete-user', async (req, res) => {
+UserRouter.post('/delete-user',checkTokenExpiry, async (req, res) => {
     const { email, userId } = req.body
     console.log(email, userId)
 
@@ -190,7 +187,7 @@ UserRouter.post('/delete-user', async (req, res) => {
     }
 })
 
-UserRouter.post('/update-user', async (req, res) => {
+UserRouter.post('/update-user',checkTokenExpiry, async (req, res) => {
     console.log(req.body)
     const { name, number, email, userType, image } = req.body
     try {
