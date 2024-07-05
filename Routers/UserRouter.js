@@ -146,7 +146,7 @@ UserRouter.post('/login-user', async (req, res) => {
         return res.send({ data: "User doesn't exists" })
     }
     if (await bcrypt.compare(password, olduser.password)) {
-        const token = jwt.sign({ email: olduser.email }, JWT_SECRET , {expiresIn: '1m'})
+        const token = jwt.sign({ email: olduser.email }, JWT_SECRET, { expiresIn: '7d' });
 
         if (res.status(201)) {
             return res.send({ status: 'ok', data: token, userType: olduser.userType, })
