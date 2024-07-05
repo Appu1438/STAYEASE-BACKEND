@@ -4,9 +4,6 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = "jkjdsnfsd()asjfbaujewhrhejwo[]jsdf";
 
-require("../Database/models/Userdetails")
-const User = mongoose.model("UserInfo")
-
 const checkTokenExpiry = (req, res, next) => {
     // Get token from headers
     const authHeader = req.headers.authorization;
