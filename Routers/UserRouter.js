@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const checkTokenExpiry = require('../middleware/checktoken');
+const checkTokenExpiry = require('./middleware/checktoken');
 require('dotenv').config();
 
 
