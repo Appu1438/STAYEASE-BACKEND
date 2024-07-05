@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const HotelRouter = require('./HotelRouter');
 const nodemailer = require('nodemailer');
-const checkTokenExpiry = require('../middleware/checktoken');
+const checkTokenExpiry = require('../middleware/checkToken');
 
 const AdminRouter = express.Router();
 
